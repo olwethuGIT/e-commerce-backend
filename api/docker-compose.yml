@@ -1,0 +1,40 @@
+version: '3'
+services:
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: ./database/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./database/settings.env
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.0.1
+    restart: unless-stopped
+    env_file:
+      - ./phpmyadmin/settings.env
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./api/settings.env
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+    volumes:
+      - appbuild:/app
+volumes:
+  mysql-data:
+  appbuild:
