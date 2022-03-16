@@ -7,12 +7,14 @@ namespace api.IData
     {
         Task<List<ProductListDto>> GetProducts(string username);
         Task<List<Order>> GetOrders(string username);
-        Task<Product?> GetProduct(string id);
-        Task<Product?> AddProduct(Product product);
-        Task<Order?> AddOrder(Order order);
+        Task<Product> GetProduct(string id);
+        Task<User> GetUser(string username);
+        Task<Product> AddProduct(Product product);
+        Task<Order> AddOrder(Order order);
         Task AddCartItem(Cart cartProducts);
-        Task<Product?> UpdateProduct(Product product);
+        Task<Product> UpdateProduct(Product product);
         Task<bool> ToggleProductFavoriteStatus(UserFavorite userFavorite);
         Task<bool> DeleteProduct(Product product);
+        Task<bool> SaveAll();
     }
 }

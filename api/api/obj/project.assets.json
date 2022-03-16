@@ -2307,11 +2307,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\OlwethuMbada\\Documents\\Personal\\E-Commerce Application\\api\\api\\api.csproj",
+      "projectUniqueName": "C:\\Users\\OlwethuMbada\\Documents\\Personal\\e-commerce-backend\\api\\api\\api.csproj",
       "projectName": "api",
-      "projectPath": "C:\\Users\\OlwethuMbada\\Documents\\Personal\\E-Commerce Application\\api\\api\\api.csproj",
+      "projectPath": "C:\\Users\\OlwethuMbada\\Documents\\Personal\\e-commerce-backend\\api\\api\\api.csproj",
       "packagesPath": "C:\\Users\\OlwethuMbada\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\OlwethuMbada\\Documents\\Personal\\E-Commerce Application\\api\\api\\obj\\",
+      "outputPath": "C:\\Users\\OlwethuMbada\\Documents\\Personal\\e-commerce-backend\\api\\api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\OlwethuMbada\\AppData\\Roaming\\NuGet\\NuGet.Config",

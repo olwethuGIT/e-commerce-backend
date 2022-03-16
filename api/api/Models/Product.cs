@@ -1,11 +1,19 @@
-﻿namespace api.Models
+﻿using System.Runtime.Serialization;
+
+namespace api.Models
 {
+    [DataContract]
     public class Product
     {
+        [DataMember]
         public int Id { get; set; }
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public float? Price { get; set; }
-        public string? ImageUrl { get; set; }
+        [DataMember]
+        public string Title { get; set; }
+        [DataMember]
+        public string Description { get; set; }
+        [DataMember]
+        public float Price { get; set; }
+        [DataMember]
+        public string ImageUrl { get; set; }
     }
 }

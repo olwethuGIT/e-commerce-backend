@@ -1,12 +1,12 @@
-﻿using api.Dto;
+﻿using api.Helpers;
 using api.IData;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
 {
+    [ServiceFilter(typeof(LogUserActivity))]
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
@@ -30,7 +30,7 @@ namespace api.Controllers
                 return Ok(productList);
             } catch (Exception ex)
             {
-                return BadRequest("Failed to fetch products");
+                return BadRequest("Failed to fetch products " + ex.Message);
             }
         }
 
@@ -44,7 +44,7 @@ namespace api.Controllers
                 return Ok(orderList);
             } catch (Exception ex)
             {
-                return BadRequest("Failed to fetch the orders.");
+                return BadRequest("Failed to fetch the orders. " + ex.Message);
             }
         }
 
@@ -54,12 +54,18 @@ namespace api.Controllers
             if (product == null)
                 return NotFound();
 
-            var savedProduct = await _repo.AddProduct(product);
+            try
+            {
+                var savedProduct = await _repo.AddProduct(product);
 
-            if (savedProduct == null)
-                return BadRequest("Failed to save the product.");
+                if (savedProduct == null)
+                    return BadRequest("Failed to save the product.");
 
-            return Ok(savedProduct);
+                return Ok(savedProduct);
+            } catch(Exception ex)
+            {
+                return BadRequest("Failed to save the product. " + ex.Message);
+            }
         }
 
         [HttpPost("add-order")]
@@ -68,12 +74,18 @@ namespace api.Controllers
             if (order == null)
                 return NotFound();
 
-            var savedOrder = await _repo.AddOrder(order);
+            try
+            {
+                var savedOrder = await _repo.AddOrder(order);
 
-            if (savedOrder == null)
-                return BadRequest("Failed to save order.");
+                if (savedOrder == null)
+                    return BadRequest("Failed to save order.");
 
-            return Ok("Order saved successfully");
+                return Ok("Order saved successfully");
+            } catch(Exception ex)
+            {
+                return BadRequest("Failed to save order. " + ex.Message);
+            }
         }
 
         [HttpPatch("update-product")]
@@ -82,12 +94,18 @@ namespace api.Controllers
             if (product == null)
                 return BadRequest("No product to update.");
 
-            var updatedProduct = await _repo.UpdateProduct(product);
+            try
+            {
+                var updatedProduct = await _repo.UpdateProduct(product);
 
-            if (updatedProduct == null)
-                return BadRequest("Failed to update the product.");
+                if (updatedProduct == null)
+                    return BadRequest("Failed to update the product.");
 
-            return Ok(updatedProduct);
+                return Ok(updatedProduct);
+            } catch (Exception ex)
+            {
+                return BadRequest("Failed to update the product. " + ex.Message);
+            }
         }
 
         [HttpPut("toggle-product-favorite-status")]
@@ -96,12 +114,18 @@ namespace api.Controllers
             if (await _repo.GetProduct(userFavorite.ProductId.ToString()) == null)
                 return BadRequest("This product does not exist.");
 
-            var markedProduct = await _repo.ToggleProductFavoriteStatus(userFavorite);
+            try
+            {
+                var markedProduct = await _repo.ToggleProductFavoriteStatus(userFavorite);
 
-            if (markedProduct == false)
-                return BadRequest("Failed to update the product.");
+                if (markedProduct == false)
+                    return BadRequest("Failed to update the product.");
 
-            return Ok("Product marked.");
+                return Ok("Product marked.");
+            } catch(Exception ex)
+            {
+                return BadRequest("Failed to update the product. " + ex.Message);
+            }
         }
 
         [HttpDelete("delete-product/{id}")]
@@ -113,12 +137,18 @@ namespace api.Controllers
             if (product == null)
                 return BadRequest("No product to delete.");
 
-            var updatedProduct = await _repo.DeleteProduct(product);
+            try
+            {
+                var updatedProduct = await _repo.DeleteProduct(product);
 
-            if (!updatedProduct)
-                return BadRequest("Failed to update the product.");
+                if (!updatedProduct)
+                    return BadRequest("Failed to update the product.");
 
-            return Ok("Product successfully deleted");
+                return Ok("Product successfully deleted");
+            } catch (Exception ex)
+            {
+                return BadRequest("Failed to update the product. " + ex.Message);
+            }
         }
     }
 }

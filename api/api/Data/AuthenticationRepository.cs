@@ -37,7 +37,7 @@ namespace api.Data
             user.PasswordSalt = passwordSalt;
 
             await _context.user.AddAsync(user);
-            await _context.SaveChangesAsync();
+            await SaveAll();
 
             return user;
         }
@@ -47,6 +47,11 @@ namespace api.Data
             if (await _context.user.AnyAsync(u => u.Username == username ))
                 return true;
             return false;
+        }
+
+        public async Task<bool> SaveAll()
+        {
+            return await _context.SaveChangesAsync() > 0;
         }
 
         #region 

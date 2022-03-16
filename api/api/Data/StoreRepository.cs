@@ -50,15 +50,15 @@ namespace api.Data
                 User = o.User
             }).Where(o => o.Username == username).ToListAsync();
         }
-        public async Task<Product?> GetProduct(string id)
+        public async Task<Product> GetProduct(string id)
         {
             return await _context.Product.FirstOrDefaultAsync(p => p.Id == int.Parse(id));
         }
-        public async Task<Product?> AddProduct(Product product)
+        public async Task<Product> AddProduct(Product product)
         {
             Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Product> created =  await _context.Product.AddAsync(product);
 
-            if (await _context.SaveChangesAsync() > 0)
+            if (await SaveAll())
             {
                 var prod = new Product()
                 {
@@ -74,13 +74,13 @@ namespace api.Data
 
             return null;
         }
-        public async Task<Order?> AddOrder(Order order)
+        public async Task<Order> AddOrder(Order order)
         {
             Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Order> created = await _context.Order.AddAsync(order);
 
             try
             {
-                if (await _context.SaveChangesAsync() > 0)
+                if (await SaveAll())
                 {
                     if (order.Products != null)
                     {
@@ -101,17 +101,23 @@ namespace api.Data
 
             return null;
         }
+        public async Task<User> GetUser(string username)
+        {
+            var user = await _context.user.FirstOrDefaultAsync(u => u.Username == username);
+
+            return user;
+        }
         public async Task AddCartItem(Cart cartProducts)
         {
             await _context.Cart.AddAsync(cartProducts);
-            await _context.SaveChangesAsync();
+            await SaveAll();
         }
 
-        public async Task<Product?> UpdateProduct(Product product)
+        public async Task<Product> UpdateProduct(Product product)
         {
             _context.Product.Update(product);
             
-            if (await _context.SaveChangesAsync() > 0)
+            if (await SaveAll())
             {
                 return await GetProduct(product.Id.ToString());
             }
@@ -130,21 +136,19 @@ namespace api.Data
                 _context.UserFavorite.Update(favorites);
             }
             
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await SaveAll();
         }
 
         public async Task<bool> DeleteProduct(Product product)
         {
             _context.Product.Remove(product);
 
-            if (await _context.SaveChangesAsync() > 0)
-                return true;
+            return await SaveAll();
+        }
 
-            return false;
+        public async Task<bool> SaveAll()
+        {
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

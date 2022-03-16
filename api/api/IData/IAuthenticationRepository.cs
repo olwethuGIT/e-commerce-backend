@@ -8,5 +8,6 @@ namespace api.IData
         Task<User> Login(AuthDto authDto);
         Task<User> Register(User authDto, string password);
         Task<bool> UserExists(string username);
+        Task<bool> SaveAll();
     }
 }
