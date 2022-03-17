@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -10,9 +11,10 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220317063133_UpdatedTableNames")]
+    partial class UpdatedTableNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,36 +90,6 @@ namespace api.Migrations
                     b.ToTable("product");
                 });
 
-            modelBuilder.Entity("api.Models.Review", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rate")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("varchar(95)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("Username");
-
-                    b.ToTable("review");
-                });
-
             modelBuilder.Entity("api.Models.User", b =>
                 {
                     b.Property<string>("Username")
@@ -179,23 +151,6 @@ namespace api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("api.Models.Review", b =>
-                {
-                    b.HasOne("api.Models.Product", "Products")
-                        .WithMany("Reviews")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.Models.User", "Users")
-                        .WithMany("Reviews")
-                        .HasForeignKey("Username");
-
-                    b.Navigation("Products");
-
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("api.Models.UserFavorite", b =>
                 {
                     b.HasOne("api.Models.User", "Users")
@@ -210,18 +165,11 @@ namespace api.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("api.Models.Product", b =>
-                {
-                    b.Navigation("Reviews");
-                });
-
             modelBuilder.Entity("api.Models.User", b =>
                 {
                     b.Navigation("Favorites");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

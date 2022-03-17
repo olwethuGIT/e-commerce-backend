@@ -8,11 +8,11 @@ namespace api.Models
         [DataMember]
         public string Id { get; set; }
         [DataMember]
-        public string title { get; set; }
+        public string Title { get; set; }
         [DataMember]
-        public int quantity { get; set; }
+        public int Quantity { get; set; }
         [DataMember]
-        public float price { get; set; }
+        public float Price { get; set; }
         [DataMember]
         public Guid OrderId { get; set; }
         [DataMember]

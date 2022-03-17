@@ -15,13 +15,14 @@ namespace api.Data
         public async Task<List<ProductListDto>> GetProducts(string username)
         {
             List<ProductListDto> productListDtos = new List<ProductListDto>();
-            var products = await _context.Product.ToListAsync();
+            var products = await _context.product.Include(r => r.Reviews).ToListAsync();
 
             foreach(var product in products)
             {
-                var userProduct = await _context.UserFavorite
+                var userProduct = await _context.userFavorite
                     .Where(p => p.ProductId == product.Id)
                     .Where(u => u.Username == username).FirstOrDefaultAsync();
+                var allowReview = await AllowReview(username, product);
 
                 var tempProduct = new ProductListDto()
                 {
@@ -30,7 +31,9 @@ namespace api.Data
                     Description = product.Description,
                     Price = product.Price,
                     ImageUrl = product.ImageUrl,
-                    IsFavorite = userProduct == null ? false : userProduct.IsFavorite
+                    Reviews = product.Reviews,
+                    IsFavorite = userProduct == null ? false : userProduct.IsFavorite,
+                    AllowReview = allowReview
                 };
                 productListDtos.Add(tempProduct);
             }
@@ -40,7 +43,7 @@ namespace api.Data
 
         public async Task<List<Order>> GetOrders(string username)
         {
-            return await _context.Order.Select(o => new Order()
+            return await _context.order.Select(o => new Order()
             {
                 Id = o.Id,
                 Amount = o.Amount,
@@ -50,13 +53,14 @@ namespace api.Data
                 User = o.User
             }).Where(o => o.Username == username).ToListAsync();
         }
-        public async Task<Product> GetProduct(string id)
+
+        public async Task<Product> GetProduct(int id)
         {
-            return await _context.Product.FirstOrDefaultAsync(p => p.Id == int.Parse(id));
+            return await _context.product.FirstOrDefaultAsync(p => p.Id == id);
         }
         public async Task<Product> AddProduct(Product product)
         {
-            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Product> created =  await _context.Product.AddAsync(product);
+            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Product> created =  await _context.product.AddAsync(product);
 
             if (await SaveAll())
             {
@@ -76,7 +80,7 @@ namespace api.Data
         }
         public async Task<Order> AddOrder(Order order)
         {
-            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Order> created = await _context.Order.AddAsync(order);
+            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Order> created = await _context.order.AddAsync(order);
 
             try
             {
@@ -103,37 +107,35 @@ namespace api.Data
         }
         public async Task<User> GetUser(string username)
         {
-            var user = await _context.user.FirstOrDefaultAsync(u => u.Username == username);
-
-            return user;
+            return await _context.user.FirstOrDefaultAsync(u => u.Username == username);
         }
-        public async Task AddCartItem(Cart cartProducts)
+        public async Task<bool> AddCartItem(Cart cartProducts)
         {
-            await _context.Cart.AddAsync(cartProducts);
-            await SaveAll();
+            await _context.cart.AddAsync(cartProducts);
+            return await SaveAll();
         }
 
         public async Task<Product> UpdateProduct(Product product)
         {
-            _context.Product.Update(product);
+            _context.product.Update(product);
             
             if (await SaveAll())
             {
-                return await GetProduct(product.Id.ToString());
+                return await _context.product.FirstOrDefaultAsync(p => p.Id == product.Id);
             }
             return null;
         }
 
         public async Task<bool> ToggleProductFavoriteStatus(UserFavorite userFavorite)
         {
-            var favorites = await _context.UserFavorite.FirstOrDefaultAsync(x => x.Username == userFavorite.Username && x.ProductId == userFavorite.ProductId);
+            var favorites = await _context.userFavorite.FirstOrDefaultAsync(x => x.Username == userFavorite.Username && x.ProductId == userFavorite.ProductId);
 
             if (favorites == null)
             {
-                await _context.UserFavorite.AddAsync(userFavorite);
+                await _context.userFavorite.AddAsync(userFavorite);
             } else {
                 favorites.IsFavorite = userFavorite.IsFavorite;
-                _context.UserFavorite.Update(favorites);
+                _context.userFavorite.Update(favorites);
             }
             
             return await SaveAll();
@@ -141,7 +143,7 @@ namespace api.Data
 
         public async Task<bool> DeleteProduct(Product product)
         {
-            _context.Product.Remove(product);
+            _context.product.Remove(product);
 
             return await SaveAll();
         }
@@ -150,5 +152,39 @@ namespace api.Data
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
+        #region
+        // Private methods
+
+        private async Task<bool> CheckUserProductInOrders(string username, string productTitle)
+        {
+            var orders = await GetOrders(username);
+
+            foreach (var products in orders)
+            {
+                foreach (var product in products.Products)
+                {
+                    if (product.Title == productTitle)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private async Task<bool> AllowReview(string username, Product product)
+        {
+            var review = await CheckUserProductInOrders(username, product.Title);
+
+            foreach (var reviews in product.Reviews)
+            {
+                if (reviews.Username == username)
+                    review = false;
+            }
+
+            return review;
+        }
+
+        #endregion
     }
 }

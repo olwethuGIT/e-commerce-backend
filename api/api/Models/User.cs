@@ -19,5 +19,7 @@ namespace api.Models
         public ICollection<UserFavorite> Favorites { get; set; }
         [DataMember]
         public ICollection<Order> Orders { get; set; }
+        [DataMember]
+        public ICollection<Review> Reviews { get; set; }
     }
 }

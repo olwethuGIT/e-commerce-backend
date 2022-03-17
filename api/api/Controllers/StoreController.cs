@@ -111,7 +111,7 @@ namespace api.Controllers
         [HttpPut("toggle-product-favorite-status")]
         public async Task<IActionResult> MarkProductFavourite([FromBody]UserFavorite userFavorite)
         {
-            if (await _repo.GetProduct(userFavorite.ProductId.ToString()) == null)
+            if (await _repo.GetProduct(userFavorite.ProductId) == null)
                 return BadRequest("This product does not exist.");
 
             try
@@ -132,7 +132,7 @@ namespace api.Controllers
         public async Task<IActionResult> DeleteProduct(String id)
         {
             // update product delete
-            var product = await _repo.GetProduct(id);
+            var product = await _repo.GetProduct(int.Parse(id));
 
             if (product == null)
                 return BadRequest("No product to delete.");
