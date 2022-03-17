@@ -12,6 +12,7 @@ namespace api.IData
         Task<Product> AddProduct(Product product);
         Task<Order> AddOrder(Order order);
         Task<bool> AddCartItem(Cart cartProducts);
+        Task<bool> AddAReview(ReviewDto review);
         Task<Product> UpdateProduct(Product product);
         Task<bool> ToggleProductFavoriteStatus(UserFavorite userFavorite);
         Task<bool> DeleteProduct(Product product);

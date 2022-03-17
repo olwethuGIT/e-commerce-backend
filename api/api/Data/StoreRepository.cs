@@ -1,6 +1,7 @@
 ﻿using api.Dto;
 using api.IData;
 using api.Models;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Data
@@ -8,9 +9,11 @@ namespace api.Data
     public class StoreRepository : IStoreRepository
     {
         private readonly DataContext _context;
-        public StoreRepository(DataContext context)
+        private readonly IMapper _mapper;
+        public StoreRepository(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task<List<ProductListDto>> GetProducts(string username)
         {
@@ -112,6 +115,15 @@ namespace api.Data
         public async Task<bool> AddCartItem(Cart cartProducts)
         {
             await _context.cart.AddAsync(cartProducts);
+            return await SaveAll();
+        }
+
+        public async Task<bool> AddAReview(ReviewDto review)
+        {
+            review.Created = DateTime.Now;
+            var reviewData = _mapper.Map<Review>(review);
+            await _context.review.AddAsync(reviewData);
+
             return await SaveAll();
         }
 

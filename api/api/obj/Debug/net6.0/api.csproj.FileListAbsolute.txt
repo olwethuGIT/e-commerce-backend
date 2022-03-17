@@ -252,3 +252,7 @@ C:\Users\OlwethuMbada\Documents\Personal\e-commerce-backend\api\api\obj\Debug\ne
 C:\Users\OlwethuMbada\Documents\Personal\e-commerce-backend\api\api\obj\Debug\net6.0\ref\api.dll
 C:\Users\OlwethuMbada\Documents\Personal\e-commerce-backend\api\api\obj\Debug\net6.0\api.pdb
 C:\Users\OlwethuMbada\Documents\Personal\e-commerce-backend\api\api\obj\Debug\net6.0\api.genruntimeconfig.cache
+C:\Users\OlwethuMbada\Documents\Personal\e-commerce-backend\api\api\bin\Debug\net6.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\OlwethuMbada\Documents\Personal\e-commerce-backend\api\api\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\Users\OlwethuMbada\Documents\Personal\e-commerce-backend\api\api\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\OlwethuMbada\Documents\Personal\e-commerce-backend\api\api\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll

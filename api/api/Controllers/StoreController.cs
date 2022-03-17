@@ -1,4 +1,5 @@
-﻿using api.Helpers;
+﻿using api.Dto;
+using api.Helpers;
 using api.IData;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -69,7 +70,7 @@ namespace api.Controllers
         }
 
         [HttpPost("add-order")]
-        public async Task<IActionResult> Addorder([FromBody] Order order)
+        public async Task<IActionResult> AddOrder([FromBody] Order order)
         {
             if (order == null)
                 return NotFound();
@@ -85,6 +86,22 @@ namespace api.Controllers
             } catch(Exception ex)
             {
                 return BadRequest("Failed to save order. " + ex.Message);
+            }
+        }
+
+        [HttpPost("add-review")]
+        public async Task<IActionResult> AddReview([FromBody] ReviewDto review)
+        {
+            try
+            {
+                if (await _repo.AddAReview(review))
+                    return Ok("Review saved successfully.");
+
+                return BadRequest("Failed to save the review.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to save the review. " + ex.Message);
             }
         }
 
