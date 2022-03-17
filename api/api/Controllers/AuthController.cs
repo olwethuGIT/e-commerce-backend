@@ -1,7 +1,9 @@
 ﻿using api.Dto;
+using api.Helpers;
 using api.IData;
 using api.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +12,7 @@ using System.Text;
 
 namespace api.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -22,6 +25,7 @@ namespace api.Controllers
             _config = config;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]AuthDto userDto)
         {
@@ -58,6 +62,8 @@ namespace api.Controllers
                 tokenExpiry
             });
         }
+
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]AuthDto authDto)
         {
