@@ -14,8 +14,8 @@ namespace api.Models
         [DataMember]
         public float Price { get; set; }
         [DataMember]
-        public string ImageUrl { get; set; }
+        public ICollection<Review> Reviews { get; set; }
         [DataMember]
-        public ICollection<Review> Reviews { get; set;}
+        public ICollection<Photo> Photos { get; set; }
     }
 }

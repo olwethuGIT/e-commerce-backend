@@ -29,5 +29,6 @@ namespace api.Data
         public DbSet<Order> order { get; set; }
         public DbSet<UserFavorite> userFavorite { get; set; }
         public DbSet<Review> review { get; set; }
+        public DbSet<Photo> photo { get; set; }
     }
 }

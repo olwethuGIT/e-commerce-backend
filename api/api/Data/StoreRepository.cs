@@ -18,14 +18,20 @@ namespace api.Data
         public async Task<List<ProductListDto>> GetProducts(string username)
         {
             List<ProductListDto> productListDtos = new List<ProductListDto>();
-            var products = await _context.product.Include(r => r.Reviews).ToListAsync();
+            var products = await _context.product.Include(r => r.Reviews).Include(p => p.Photos).ToListAsync();
 
             foreach(var product in products)
             {
+                double reviewRate = 0;
                 var userProduct = await _context.userFavorite
                     .Where(p => p.ProductId == product.Id)
                     .Where(u => u.Username == username).FirstOrDefaultAsync();
                 var allowReview = await AllowReview(username, product);
+
+                foreach (var value in product.Reviews)
+                {
+                    reviewRate += value.Rate;
+                }
 
                 var tempProduct = new ProductListDto()
                 {
@@ -33,10 +39,11 @@ namespace api.Data
                     Title = product.Title,
                     Description = product.Description,
                     Price = product.Price,
-                    ImageUrl = product.ImageUrl,
+                    Photos = product.Photos,
                     Reviews = product.Reviews,
                     IsFavorite = userProduct == null ? false : userProduct.IsFavorite,
-                    AllowReview = allowReview
+                    AllowReview = allowReview,
+                    Rating = reviewRate != 0 ? reviewRate / product.Reviews.Count() : 0
                 };
                 productListDtos.Add(tempProduct);
             }
@@ -72,8 +79,7 @@ namespace api.Data
                     Id = created.Entity.Id,
                     Title = created.Entity.Title,
                     Description = created.Entity.Description,
-                    Price = created.Entity.Price,
-                    ImageUrl = created.Entity.ImageUrl
+                    Price = created.Entity.Price
                 };
 
                 return prod;
